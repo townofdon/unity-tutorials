@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
   private float speed = 10;
   private float groundedDistance = 0.03f;
   private bool isGrounded = false;
-  private float coyoteTime = 0.1f;
+  private float coyoteTime = 0.25f;
   private float currentCoyoteTime = 0f;
 
 
@@ -22,6 +22,13 @@ public class PlayerMovement : MonoBehaviour
   RaycastHit2D[] _groundRaycastResults = new RaycastHit2D[1];
   private float _inputX = 0f;
   private Vector2 _bottomPos;
+  private AudioManager audioManager;
+
+  void Awake()
+  {
+    audioManager = AudioManager.instance;
+    if (audioManager == null) Debug.LogError("NO AudioManager instance found in this scene for PlayerMovement!");
+  }
 
   // Start is called before the first frame update
   void Start()
@@ -50,11 +57,13 @@ public class PlayerMovement : MonoBehaviour
     if (Mathf.Abs(_inputX) > 0)
     {
       Walk(_inputX);
+      if (isGrounded) audioManager.PlaySound("Step");
     }
 
     if (Input.GetAxisRaw("Jump") > 0 && isGrounded)
     {
       Jump();
+      audioManager.PlaySound("Jump");
     }
   }
 
